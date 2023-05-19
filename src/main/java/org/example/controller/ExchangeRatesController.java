@@ -21,11 +21,13 @@ public class ExchangeRatesController {
         return service.getExchangeRates(request);
     }
 
+    //Populates data for the last 8 days (same rates, but different date)
     @PostMapping(value = "/populate", produces = MediaType.APPLICATION_JSON_VALUE)
     public void populateRates() {
         cron.populateData();
     }
 
+    //Remove entries that are older than 7 days. This cron is also scheduled to remove data on daily basis, 15 minutes after data is updated.
     @PostMapping(value = "/clean", produces = MediaType.APPLICATION_JSON_VALUE)
     public void cleanDb() {
         cron.removeOlderEntries();
