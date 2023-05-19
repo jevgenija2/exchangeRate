@@ -1,0 +1,14 @@
+spring:
+  datasource:
+    url: jdbc:postgresql://dbpostgresql:5432/exchange_rates_db
+    username: user
+    password: password
+  jpa:
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+    hibernate:
+      ddl-auto: update
+
+free-currency:
+  key: TuewXHlBKmK3YcsX43KDwconCb6qUYTQYt6QA4oo
+  url: https://api.freecurrencyapi.com/v1
+  currencies: #Can be used to specify one or multiple currency, which we want to receive from freecurrencyapi

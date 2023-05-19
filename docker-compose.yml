@@ -1,0 +1,24 @@
+services:
+  dbpostgresql:
+    image: postgres:latest
+    ports:
+      - "5432:5432"
+    networks:
+      - exchange-rate
+    environment:
+      POSTGRES_DB: exchange_rates_db
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: password
+
+  exchangerates:
+    build: .
+    container_name: exchange-rates
+    ports:
+      - "8080:8080"
+    networks:
+      - exchange-rate
+    depends_on:
+      - dbpostgresql
+
+networks:
+  exchange-rate:
