@@ -14,23 +14,27 @@ public class ExchangeRatesCronJob {
     private ExchangeRatesService service;
 
     @Scheduled(cron = "0 0 1 * * *") //Executes at 01:00 every day
-    public void getDailyExchangeRatesUpdate(){
+    public void getDailyExchangeRatesUpdate() {
         // Handle the response
         webClient.get()
                 .uri("/latest")
                 .retrieve()
                 .bodyToMono(FreeCurrencyApiResponse.class)
-                .subscribe( rates -> {
+                .subscribe(rates -> {
                     service.saveExchangeRates(rates.getData(), true);
                     System.out.println("Rates updated.");
-                        }
-                );
+                }, error -> {
+                    System.out.println("Something went wrong during request to freecurrencyapi: " + error.getMessage());
+                });
     }
 
     @Scheduled(cron = "0 15 1 * * *")
     public void removeOlderEntries() {
-        service.removeOlderEntries();
-        System.out.println("Entries that are older than 7 days deleted.");
+        try {
+            service.removeOlderEntries();
+        } catch (Exception e) {
+            System.out.println("Something went wrong, during older entries removal: " + e.getMessage());
+        }
     }
 
     public void populateData() {
@@ -38,11 +42,11 @@ public class ExchangeRatesCronJob {
                 .uri("/latest")
                 .retrieve()
                 .bodyToMono(FreeCurrencyApiResponse.class)
-                .subscribe( rates -> {
+                .subscribe(rates -> {
                             service.saveExchangeRates(rates.getData(), false);
-                            System.out.println("Data populated.");
+                        }, error -> {
+                            System.out.println("Something went wrong during request to freecurrencyapi: " + error.getMessage());
                         }
                 );
     }
-
 }

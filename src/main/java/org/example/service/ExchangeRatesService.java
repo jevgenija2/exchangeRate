@@ -24,9 +24,14 @@ public class ExchangeRatesService {
 
     private ExchangeRatesHistoryRepository historyRepository;
 
+    @Transactional
     public void saveExchangeRates(Map<String, Double> exchangeRates, boolean isDataUpdate) {
-
         historyRepository.saveAll(convertToEntity(exchangeRates, isDataUpdate));
+    }
+
+    @Transactional
+    public void removeOlderEntries(){
+        historyRepository.deleteAllByDate(LocalDate.now().minusDays(8));
     }
 
     public ExchangeRateResponse getExchangeRates(RateRequest request) {
@@ -80,11 +85,6 @@ public class ExchangeRatesService {
                         .map(entity -> Map.of(entity.getCurrency(), entity.getRate()))
                         .collect(toList()))
                 .build();
-    }
-
-    @Transactional
-    public void removeOlderEntries(){
-        historyRepository.deleteAllByDate(LocalDate.now().minusDays(8));
     }
 
     private List<ExchangeRateEntity> convertToEntity(Map<String, Double> exchangeRates, boolean isDataUpdate) {

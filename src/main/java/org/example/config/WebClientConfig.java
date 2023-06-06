@@ -45,6 +45,7 @@ public class WebClientConfig {
             ClientRequest updatedRequest = ClientRequest.from(request)
                     .url(uriBuilder.build().toUri())
                     .build();
+
             return Mono.just(updatedRequest);
         });
     }
